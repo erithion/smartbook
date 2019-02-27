@@ -1,0 +1,66 @@
+name:                smartbook
+version:             0.1.0.0
+github:              "erithion/smartbook"
+license:             MIT
+author:              "Bondartsov Artyom"
+maintainer:          "erithion@gmail.com"
+copyright:           "2018 Bondartsov Artyom"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+data-files:
+- ./test/bkBilingual.txt
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/erithion/smartbook#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- cipher-aes
+- base64-bytestring
+- bytestring
+- either
+- aeson
+- containers
+- unordered-containers
+- text
+- aeson-pretty
+- extra
+- lens
+- data-default
+- split
+
+library:
+  source-dirs: src
+
+executables:
+  smartbook-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - smartbook
+
+tests:
+  smartbook-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - smartbook
+    - hspec
+    - filepath
+
