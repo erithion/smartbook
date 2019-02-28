@@ -26,12 +26,12 @@ data Version = Version
     } deriving (Generic, Default, Show, Eq)
 makeLenses ''Version
         
-data Content 
-    = Chapter {chapterName :: Text, chapterDescription :: Maybe Text, chapters :: [Content]}
-    | Paragraph {chapterName :: Text, chapterDescription :: Maybe Text, paragraphs :: [Map Text Text]}
+data Chapter 
+    = Chapter {chapterName :: Text, chapterDescription :: Maybe Text, chapters :: [Chapter]}
+    | Leaf {chapterName :: Text, chapterDescription :: Maybe Text, paragraphs :: [Map Text Text]}
     deriving (Generic, Show, Eq)
-instance Default Content where
-  def = Paragraph def def []
+instance Default Chapter where
+  def = Leaf def def []
 
 data Book = Book 
     { _bookLang :: Text
@@ -43,7 +43,7 @@ data Book = Book
     , _bookFilename :: Text
     , _bookSize :: Int
     , _bookLangs :: [ Version ]
-    , _bookChapters :: [Content]
+    , _bookChapters :: [Chapter]
     } deriving (Generic, Default, Show, Eq)
 makeLenses ''Book    
 
@@ -67,7 +67,7 @@ enruBoilerplate fileName title author = def
 -- plainChapters means that nested chapters will be at the same first level as their parent chapters
 -- bilingualText : 1st row - lang 1, 2nd row - lang 2, 3rd row - lang 1, 4th row - lang 2, ...
 -- firstBookChapterMarkers - a list of possible chapter words to break upon encountering; case is irrelevant
-plainChapters :: [Text] -> Text -> [Content]
+plainChapters :: [Text] -> Text -> [Chapter]
 plainChapters firstBookChapterMarkers bilingualText = 
     let 
         indexed = zip [0..] (lines bilingualText)

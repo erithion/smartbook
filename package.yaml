@@ -26,13 +26,10 @@ dependencies:
 - cipher-aes
 - base64-bytestring
 - bytestring
-- either
-- aeson
-- containers
-- unordered-containers
-- text
-- aeson-pretty
 - extra
+- containers
+- aeson
+- text
 - lens
 - data-default
 - split
@@ -50,6 +47,7 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - smartbook
+    - optparse-applicative
 
 tests:
   smartbook-test:

@@ -3,7 +3,7 @@ module Main where
 
 import Prelude                                       hiding (readFile)
 import           Paths_smartbook                            (getDataFileName)
-import           Data.Aeson                                 (eitherDecode)
+import           Data.Aeson                                 (eitherDecode, encode)
 import           Test.Hspec
 import           Data.Text.Lazy.IO                          (readFile)
 import           Data.Text.Lazy                             (Text)
@@ -22,27 +22,8 @@ dataFile name = do
 
 main :: IO ()
 main = do
---    enData <- dataFile "bkEn.txt"
---    noData <- dataFile "bkNo.txt"
---    sbData <- dataFile "bkSb.txt"
     bilData <- dataFile "bkBilingual.txt"
-
-    hspec $ do
-        describe "Smartbook.Crypto" $ do
-            let rehearse :: Text -> Either String Text = decrypt . encrypt
-            it "data == decrypt . encrypt $ data - padding needed" $ do
-                rehearse "1234567890abcdef12" `shouldBe` Right "1234567890abcdef12"
-        
-            it "data == decrypt . encrypt $ data - padding NOT needed" $
-                rehearse "1234567890abcdef" `shouldBe` Right "1234567890abcdef"
-        
-            it "data == decrypt . encrypt $ data - padding FAKE" $
-                rehearse "1234567890abcde\3" `shouldBe` Right "1234567890abcde\3"
-                
-        describe "Smartbook.Book" $ do
-            let result = exampleComposeBook (enruBoilerplate "file" "title" "author") 
-                                            (plainChapters ["kapitel", "chapter"] bilData)
-            let book = Book { _bookLang = "en"
+    let book = Book { _bookLang = "en"
                             , _bookName = ""
                             , _bookRusName = "" 
                             , _bookAuthor = "" 
@@ -65,12 +46,12 @@ main = do
                                           }
                                 ]
                             , _bookChapters = 
-                                [Paragraph { chapterName = ""
+                                [Leaf      { chapterName = ""
                                            , chapterDescription = Nothing
                                            , paragraphs = 
                                                 [fromList [("en",""),("ru","")]]
                                            }
-                                ,Paragraph { chapterName = "Chapter 1"
+                                ,Leaf      { chapterName = "Chapter 1"
                                            , chapterDescription = Nothing
                                            , paragraphs = 
                                                 [fromList [("en","Chapter 1"),("ru","Første kapitel.")]
@@ -78,7 +59,7 @@ main = do
                                                 ,fromList [("en","Mr. Sherlock Holmes, who was usually very late in the mornings, save upon those not infrequent occasions when he was up all night, was seated at the breakfast table. I stood upon the hearth-rug and picked up the stick which our visitor had left behind him the night before. It was a fine, thick piece of wood, bulbous-headed, of the sort which is known as a \"Penang lawyer.\" Just under the head was a broad silver band nearly an inch across. \"To James Mortimer, M.R.C.S., from his friends of the C.C.H.,\" was engraved upon it, with the date \"1884.\" It was just such a stick as the old-fashioned family practitioner used to carry—dignified, solid, and reassuring."),("ru","HOLMES, som vanligvis var meget sent oppe om morgenen, untatt i de ikke sjeldne tilfellene da han var oppe hele natten — satt ved frokostbordet.Jeg stod på kaminteppet og tok opp stokken som vår gjest den foregående aften hadde etterlatt seg. Den var forarbeidet av vakkert, fast tre, og hadde et løkformet hode. Like under håndtaket gikk et nesten tommebredt sølvbånd.")]
                                                 ,fromList [("en","..."),("ru","...")]]
                                            }
-                                ,Paragraph { chapterName = "Chapter 2"
+                                ,Leaf      { chapterName = "Chapter 2"
                                            , chapterDescription = Nothing
                                            , paragraphs = 
                                                 [fromList [("en","Chapter 2"),("ru","Andet kapitel.")]
@@ -91,13 +72,26 @@ main = do
                                            }
                                 ]
                             }
+
+    hspec $ do
+        describe "Smartbook.Crypto" $ do
+            let rehearse :: Text -> Either String Text = decrypt . encrypt
+            it "data == decrypt . encrypt $ data - padding needed" $ do
+                rehearse "1234567890abcdef12" `shouldBe` Right "1234567890abcdef12"
+        
+            it "data == decrypt . encrypt $ data - padding NOT needed" $
+                rehearse "1234567890abcdef" `shouldBe` Right "1234567890abcdef"
+        
+            it "data == decrypt . encrypt $ data - padding FAKE" $
+                rehearse "1234567890abcde\3" `shouldBe` Right "1234567890abcde\3"
+                
+        describe "Smartbook.Book" $ do
+            let result = exampleComposeBook (enruBoilerplate "file" "title" "author") 
+                                            (plainChapters ["kapitel", "chapter"] bilData)
             it "simple book creation - with non-ascii letters and two chapters" $
                 result `shouldBe` book
                 
-{-            
-        describe "Smartbook.Book" $ do
-            let sb :: Either String Book = eitherDecode . encodeUtf8 $ sbData
-            it "simple book creation - NO non-ascii letters check" $
-                (Right $ build enData noData "a9.sb") `shouldBe` sb
--}    
             
+        describe "Smartbook.JSON" $ do
+            it "to and from json conversion check" $
+                (eitherDecode . encode $ book) `shouldBe` Right book
