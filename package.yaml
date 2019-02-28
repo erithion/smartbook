@@ -11,6 +11,7 @@ extra-source-files:
 - ChangeLog.md
 data-files:
 - ./test/bkBilingual.txt
+- ./test/bkIllFormed.txt
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package

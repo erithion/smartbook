@@ -63,7 +63,6 @@ enruBoilerplate fileName title author = def
             . (versionTranslation .~ Just empty)
             . (versionTranslationSize .~ Just 0)
 
--- TODO: correctly handle ill-formatted texts, i.e. when linesBook1 != linesBook2            
 -- plainChapters means that nested chapters will be at the same first level as their parent chapters
 -- bilingualText : 1st row - lang 1, 2nd row - lang 2, 3rd row - lang 1, 4th row - lang 2, ...
 -- firstBookChapterMarkers - a list of possible chapter words to break upon encountering; case is irrelevant

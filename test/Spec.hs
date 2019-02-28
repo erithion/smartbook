@@ -23,6 +23,7 @@ dataFile name = do
 main :: IO ()
 main = do
     bilData <- dataFile "bkBilingual.txt"
+    illData <- dataFile "bkIllFormed.txt" -- the file contains odd number of lines, i.e. the first book is bigger than the second 
     let book = Book { _bookLang = "en"
                             , _bookName = ""
                             , _bookRusName = "" 
@@ -72,6 +73,41 @@ main = do
                                            }
                                 ]
                             }
+    let illBook = Book { _bookLang = "en"       -- by virtue of zipWith Sherlock Holmes line must be absent in a resulting json
+                            , _bookName = ""
+                            , _bookRusName = "" 
+                            , _bookAuthor = "" 
+                            , _bookHash = ""
+                            , _bookThumbnail = ""
+                            , _bookFilename = "file" 
+                            , _bookSize = 0 
+                            , _bookLangs = 
+                                [ Version { _versionName = "title"
+                                          , _versionLang = "en"
+                                          , _versionTranslation = Nothing
+                                          , _versionTranslationSize = Nothing
+                                          , _versionAuthor = Just "author"
+                                          },
+                                  Version {_versionName = ""
+                                          , _versionLang = "ru"
+                                          , _versionTranslation = Just ""
+                                          , _versionTranslationSize = Just 0
+                                          , _versionAuthor = Nothing
+                                          }
+                                ]
+                            , _bookChapters = 
+                                [Leaf      { chapterName = ""
+                                           , chapterDescription = Nothing
+                                           , paragraphs = 
+                                                [fromList [("en",""),("ru","")]]
+                                           }
+                                ,Leaf      { chapterName = "Chapter 1"
+                                           , chapterDescription = Nothing
+                                           , paragraphs = 
+                                                [fromList [("en","Chapter 1"),("ru","Første kapitel.")]]
+                                           }
+                                ]
+                            }
 
     hspec $ do
         describe "Smartbook.Crypto" $ do
@@ -91,7 +127,19 @@ main = do
             it "simple book creation - with non-ascii letters and two chapters" $
                 result `shouldBe` book
                 
+        describe "Smartbook.Book" $ do
+            let result = exampleComposeBook (enruBoilerplate "file" "title" "author") 
+                                            (plainChapters ["kapitel", "chapter"] illData)
+            it "simple book creation - ill formed book with odd lines" $
+                result `shouldBe` illBook
             
         describe "Smartbook.JSON" $ do
             it "to and from json conversion check" $
                 (eitherDecode . encode $ book) `shouldBe` Right book
+                
+        describe "Smartbook Integration Test" $ do
+            let b1 = exampleComposeBook (enruBoilerplate "file" "title" "author") 
+                                        (plainChapters ["kapitel", "chapter"] bilData)
+            let b2 = eitherDecode . encode $ b1
+            it "bilingual txt-file -> json book -> sb-book -> json book 'shouldBe' original json" $
+                b2 `shouldBe` Right book
