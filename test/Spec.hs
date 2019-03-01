@@ -122,16 +122,21 @@ main = do
                 rehearse "1234567890abcde\3" `shouldBe` Right "1234567890abcde\3"
                 
         describe "Smartbook.Book" $ do
-            let result = exampleComposeBook (enruBoilerplate "file" "title" "author") 
+            let bilResult = exampleComposeBook (enruBoilerplate "file" "title" "author") 
                                             (plainChapters ["kapitel", "chapter"] bilData)
-            it "simple book creation - with non-ascii letters and two chapters" $
-                result `shouldBe` book
                 
-        describe "Smartbook.Book" $ do
-            let result = exampleComposeBook (enruBoilerplate "file" "title" "author") 
+            let illResult = exampleComposeBook (enruBoilerplate "file" "title" "author") 
                                             (plainChapters ["kapitel", "chapter"] illData)
+            let winPathResult = enruBoilerplate "c:\\fld1\\fld2\\file.txt" "" ""
+            let linPathResult = enruBoilerplate "/fld1/fld2/file" "" ""
             it "simple book creation - ill formed book with odd lines" $
-                result `shouldBe` illBook
+                illResult `shouldBe` illBook
+            it "simple book creation - with non-ascii letters and two chapters" $
+                bilResult `shouldBe` book
+            it "simple book creation - windows file path test" $
+                (_bookFilename winPathResult) `shouldBe` "file.txt"
+            it "simple book creation - linux file path test" $
+                (_bookFilename linPathResult) `shouldBe` "file"
             
         describe "Smartbook.JSON" $ do
             it "to and from json conversion check" $
