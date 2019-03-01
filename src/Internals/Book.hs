@@ -13,6 +13,7 @@ import Data.Default
 import Control.Lens
 import Data.Text.Lazy.Lens
 import Data.List.Split
+import System.FilePath                                  (takeFileName)
 
 instance Default Text where
   def = empty
@@ -50,7 +51,7 @@ makeLenses ''Book
 -- Only en-ru direction lets you see author's translation in Smartbook app    
 enruBoilerplate fileName title author = def 
     & (bookLang .~ "en"^.packed) 
-    . (bookFilename .~ fileName^.packed)
+    . (bookFilename .~ (takeFileName fileName)^.packed)
     . (bookLangs .~ [enVersion title author, ruVersion])
     where 
         enVersion title author = def 

@@ -34,6 +34,7 @@ dependencies:
 - lens
 - data-default
 - split
+- filepath
 
 library:
   source-dirs: src
