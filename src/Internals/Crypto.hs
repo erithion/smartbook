@@ -25,7 +25,7 @@ decrypt b64 = do
     where removePadding :: BS.ByteString -> BS.ByteString
           removePadding bs
             | BS.null bs        = bs
-            | BS.last bs <= 15  = let count = fromIntegral . BS.last $ bs
+            | BS.last bs <= 16  = let count = fromIntegral . BS.last $ bs
                                       suffix = BS.replicate count (toEnum count) 
                                   in case BS.stripSuffix suffix bs of
                                             -- Padding found
@@ -42,7 +42,7 @@ encrypt ob = B64.encode . encryptECB aes $
         paddingArray :: Int -> BS.ByteString
         paddingArray size = 
             let count = case mod size 16 of 
-                                0 -> 0
+                                0 -> 16
                                 x -> fromIntegral $ 16 - x
             --  Padding: The value of each added byte is the number of bytes that are added, for example 03 03 03 or 04 04 04 04
             in BS.replicate count (toEnum count)

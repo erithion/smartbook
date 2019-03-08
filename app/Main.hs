@@ -51,7 +51,7 @@ buildOptions = Build
          <> value True
          <> metavar "BOOL" )
     <*> strOption
-         (  long "out"
+         (  long "output"
          <> short 'o'
          <> metavar "FILE"
          <> value "out.sb"
@@ -60,12 +60,12 @@ buildOptions = Build
 cipherOptions :: Parser (String -> String -> AppOptions) -> Parser AppOptions
 cipherOptions v = v 
     <*> strOption 
-         (  long "file"
-         <> short 'f'
+         (  long "input"
+         <> short 'i'
          <> metavar "FILE"
          <> help "Input file to process" )
     <*> strOption
-         (  long "out"
+         (  long "output"
          <> short 'o'
          <> metavar "FILE"
          <> help "Resulting file" )

@@ -121,6 +121,18 @@ main = do
             it "data == decrypt . encrypt $ data - padding FAKE" $
                 rehearse "1234567890abcde\3" `shouldBe` Right "1234567890abcde\3"
                 
+            it "padding test encrypt - block % 16 /= 0" $ do
+                encrypt ("1234567890a"::Text) `shouldBe` "yvjcZdXUCgBGUVcEctaCQg=="
+
+            it "padding test decrypt - block % 16 /= 0" $ do
+                decrypt ("yvjcZdXUCgBGUVcEctaCQg==") `shouldBe` (Right "1234567890a"::Either String Text)
+                
+            it "padding test - block % 16 == 0" $ do
+                encrypt ("1234567890abcdef"::Text) `shouldBe` "qdWoox9ENOESXXiKihnsl1j1Fg85ZisQAqTeNhe32s4="
+                
+            it "padding test decrypt - block % 16 == 0" $ do
+                decrypt "qdWoox9ENOESXXiKihnsl1j1Fg85ZisQAqTeNhe32s4=" `shouldBe` (Right "1234567890abcdef"::Either String Text)
+                
         describe "Smartbook.Book" $ do
             let bilResult = exampleComposeBook (enruBoilerplate "file" "title" "author") 
                                             (plainChapters ["kapitel", "chapter"] bilData)
