@@ -13,7 +13,7 @@ import Data.Default
 import Control.Lens
 import Data.Text.Lazy.Lens
 import Data.List.Split
-import System.FilePath                                  (takeFileName)
+import System.FilePath.Windows                          (takeFileName) -- default System.FilePath seems to include POSIX implementation on Linux and fails to parse Windows path whenever it comes in from a client  
 
 instance Default Text where
   def = empty
