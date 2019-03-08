@@ -3,6 +3,7 @@ module Smartbook
 ( module Internals.Crypto
 , module Internals.Book
 , module Internals.JSON
+, libraryGitInfo
 ) where
 
 import Internals.Crypto
@@ -11,5 +12,5 @@ import Internals.JSON
 import Development.GitRev
 
 --gitLibraryInfo :: a
-gitLibraryInfo = concat [ $(gitBranch), "@", $(gitHash) ]
+libraryGitInfo = concat [ $(gitBranch), "@", $(gitHash) ]
 
